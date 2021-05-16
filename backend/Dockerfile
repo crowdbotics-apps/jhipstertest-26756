@@ -3,7 +3,9 @@ ADD . /code/
 RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
     rm -Rf /target /node_modules && \
     cd /code/ && \
+    ls && \
     ./mvnw clean package -Pprod -DskipTests && \
+    ls && \
     mv /target/*.jar /app.jar
 
 FROM openjdk:8-jre-alpine
