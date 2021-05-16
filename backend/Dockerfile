@@ -1,12 +1,10 @@
-FROM openjdk:8
+FROM openjdk:8-jre-alpine
 
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JHIPSTER_SLEEP=0 \
     JAVA_OPTS=""
 
 ADD . /code/
-
-RUN apk update && apk add bash
 
 RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
     rm -Rf /target /node_modules && \
