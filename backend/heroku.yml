@@ -1,6 +1,6 @@
 build:
   docker:
-    web: ./src/main/docker/app.yml
+    web: Dockerfile
   config:
     DEBUG_COLLECTSTATIC: 1
     SECRET_KEY: build
