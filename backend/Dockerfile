@@ -1,25 +1,16 @@
+# Stage 1 Build the Spring Project into a jar file
+FROM openjdk:8-slim as builder
+RUN mkdir src
+COPY . /src
+WORKDIR /src
+RUN chmod 700 mvnw && ./mvnw clean install package  ==>error on this line
 
-FROM azul/zulu-openjdk-alpine:11 as zulu
-
-RUN export ZULU_FOLDER=`ls /usr/lib/jvm/` \
-    && jlink --compress=1 --strip-debug --no-header-files --no-man-pages \
-    --module-path /usr/lib/jvm/$ZULU_FOLDER/jmods \
-    --add-modules java.desktop,java.logging,java.sql,java.management,java.naming,jdk.unsupported,jdk.management,jdk.crypto.ec,java.net.http \
-    --output /jlinked
-
-FROM alpine:latest
-
-COPY --from=zulu /jlinked /opt/jdk/
-
-RUN apk update
-RUN rm -rf /var/cache/apk/*
-
-ENV CFP_JAVA_OPTS="-Xmx512m"
-ENV CFP_PERFORMANCE_OPTS="-Dspring.jmx.enabled=false -Dlog4j2.disableJmx=true"
-
-CMD /opt/jdk/bin/java $CFP_JAVA_OPTS $CFP_PERFORMANCE_OPTS -XX:+UseContainerSupport \
-                           -noverify -XX:+AlwaysPreTouch -Djava.security.egd=file:/dev/./urandom -jar /app.jar
-
-ADD target/*.jar /app.jar
-
+# Stage 2 Run the jar file from previous build
+FROM openjdk:8-jdk-alpine
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
+COPY --from=builder /src/target /build
+WORKDIR /build
 EXPOSE 80
+EXPOSE 5001
+ENTRYPOINT ["java", "-jar", "tax-0.0.1-SNAPSHOT.jar"]
