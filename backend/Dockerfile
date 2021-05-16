@@ -1,9 +1,5 @@
 FROM openjdk:8-jre-alpine
 
-ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
-    JHIPSTER_SLEEP=0 \
-    JAVA_OPTS=""
-
 ADD . /code/
 
 RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
@@ -14,4 +10,4 @@ RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
 
 EXPOSE 80
 
-CMD java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar /code/app.jar
+CMD java -Djava.security.egd=file:/dev/./urandom -jar /code/app.jar
