@@ -14,4 +14,3 @@ EXPOSE 8080
 CMD echo "The application will start in ${JHIPSTER_SLEEP}s..." && \
     sleep ${JHIPSTER_SLEEP} && \
     java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar app.war
-COPY --from=0 app.jar .
