@@ -1,6 +1,6 @@
 build:
   docker:
-    web: ./backend/Dockerfile
+    web: ./backend/src/main/docker/app.yml
   config:
     DEBUG_COLLECTSTATIC: 1
     SECRET_KEY: build
