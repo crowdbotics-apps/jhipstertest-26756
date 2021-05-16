@@ -5,13 +5,16 @@ ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JAVA_OPTS=""
 
 ADD . /code/
+
+RUN apk update && apk add bash
+
 RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
     rm -Rf /target /node_modules && \
     cd /code/ && \
     ./mvnw clean package -Pprod -DskipTests && \
     mv target/*.jar app.jar
 
-EXPOSE 8080
+EXPOSE 80
 
 RUN adduser -D -s /bin/sh jhipster
 USER jhipster
