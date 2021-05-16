@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "application",
+      "type": "com.crowdbotics.apptest.config.ApplicationProperties",
+      "sourceType": "com.crowdbotics.apptest.config.ApplicationProperties"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}
