@@ -1,17 +1,25 @@
-FROM openjdk:8
-ADD . /code/
-RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
-    rm -Rf /code/target /code/node_modules && \
-    cd /code/ && \
-    ./mvnw package -Pprod -DskipTests && \
-    mv /code/target/*.war /app.war
 
-FROM openjdk:8-jre-alpine
-ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
-    JHIPSTER_SLEEP=0 \
-    JAVA_OPTS=""
-EXPOSE 8080
-CMD echo "The application will start in ${JHIPSTER_SLEEP}s..." && \
-    sleep ${JHIPSTER_SLEEP} && \
-    java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar /app.war
-COPY --from=0 /app.war .
+FROM azul/zulu-openjdk-alpine:11 as zulu
+
+RUN export ZULU_FOLDER=`ls /usr/lib/jvm/` \
+    && jlink --compress=1 --strip-debug --no-header-files --no-man-pages \
+    --module-path /usr/lib/jvm/$ZULU_FOLDER/jmods \
+    --add-modules java.desktop,java.logging,java.sql,java.management,java.naming,jdk.unsupported,jdk.management,jdk.crypto.ec,java.net.http \
+    --output /jlinked
+
+FROM alpine:latest
+
+COPY --from=zulu /jlinked /opt/jdk/
+
+RUN apk update
+RUN rm -rf /var/cache/apk/*
+
+ENV CFP_JAVA_OPTS="-Xmx512m"
+ENV CFP_PERFORMANCE_OPTS="-Dspring.jmx.enabled=false -Dlog4j2.disableJmx=true"
+
+CMD /opt/jdk/bin/java $CFP_JAVA_OPTS $CFP_PERFORMANCE_OPTS -XX:+UseContainerSupport \
+                           -noverify -XX:+AlwaysPreTouch -Djava.security.egd=file:/dev/./urandom -jar /app.jar
+
+ADD target/*.jar /app.jar
+
+EXPOSE 80
