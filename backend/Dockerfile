@@ -1,5 +1,9 @@
 FROM openjdk:8
+
 ADD . /code/
+
+RUN /bin/sh -c "apk add --no-cache bash"
+
 RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
     rm -Rf /target /node_modules && \
     cd /code/ && \
