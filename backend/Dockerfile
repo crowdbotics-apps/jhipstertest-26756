@@ -1,8 +1,6 @@
 FROM openjdk:8
-ADD . /code/
-RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
-    rm -Rf /target /node_modules && \
-    cd /code/ && \
+ADD . .
+RUN rm -Rf /target /node_modules && \
     ./mvnw clean package -Pprod -DskipTests && \
     mv target/*.jar app.jar
 
@@ -15,5 +13,5 @@ EXPOSE 80
 RUN adduser -D -s /bin/sh jhipster
 USER jhipster
 
-CMD java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar app.war
-COPY --from=0 /code/app.jar .
+CMD java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar app.jar
+COPY --from=0 app.jar .
