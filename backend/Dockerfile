@@ -1,16 +1,14 @@
-# Stage 1 Build the Spring Project into a jar file
-FROM openjdk:8-slim as builder
-RUN mkdir src
-COPY . /src
-WORKDIR /src
-RUN chmod 700 mvnw && ./mvnw clean install package  ==>error on this line
+FROM openjdk:8
+ADD . /code/
+RUN echo '{ "allow_root": true }' > /root/.bowerrc && \
+    rm -Rf /code/target /code/node_modules && \
+    cd /code/
 
-# Stage 2 Run the jar file from previous build
-FROM openjdk:8-jdk-alpine
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
-COPY --from=builder /src/target /build
-WORKDIR /build
-EXPOSE 80
-EXPOSE 5001
-ENTRYPOINT ["java", "-jar", "tax-0.0.1-SNAPSHOT.jar"]
+FROM openjdk:8-jre-alpine
+ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
+    JHIPSTER_SLEEP=0 \
+    JAVA_OPTS=""
+EXPOSE 8080
+CMD echo "The application will start in ${JHIPSTER_SLEEP}s..." && \
+    sleep ${JHIPSTER_SLEEP} && \
+    ./mvnw -Pprod -DskipTests
