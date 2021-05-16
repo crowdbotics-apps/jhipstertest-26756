@@ -57,7 +57,8 @@
     "ci:e2e:package": "npm run java:$npm_package_config_packaging:$npm_package_config_default_environment -- -Pe2e -Denforcer.skip=true",
     "preci:e2e:server:start": "npm run docker:db:await --if-present && npm run docker:others:await --if-present",
     "ci:e2e:server:start": "java -jar target/e2e.$npm_package_config_packaging --spring.profiles.active=$npm_package_config_default_environment -Dlogging.level.ROOT=OFF -Dlogging.level.org.zalando=OFF -Dlogging.level.tech.jhipster=OFF -Dlogging.level.com.crowdbotics.apptest=OFF -Dlogging.level.org.springframework=OFF -Dlogging.level.org.springframework.web=OFF -Dlogging.level.org.springframework.security=OFF --logging.level.org.springframework.web=ERROR",
-    "ci:frontend:test": "npm run webapp:build:$npm_package_config_default_environment && npm run test-ci"
+    "ci:frontend:test": "npm run webapp:build:$npm_package_config_default_environment && npm run test-ci",
+    "build": "./mvnw package -Pprod -DskipTests && rm -rf jarfile/app.jar && mv target/*.jar jarfile/app.jar"
   },
   "config": {
     "backend_port": "8080",
