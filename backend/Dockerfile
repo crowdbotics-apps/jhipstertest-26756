@@ -1,14 +1,20 @@
-FROM openjdk:8-jre-alpine
-ADD /jarfile/ .
+FROM openjdk:11-jre-slim-stretch
 
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JHIPSTER_SLEEP=0 \
     JAVA_OPTS=""
-EXPOSE 80
 
-RUN ls
+# Add a jhipster user to run our application so that it doesn't need to run as root
+RUN adduser --home /home/jhipster --disabled-password jhipster
 
-RUN adduser -D -s /bin/sh jhipster
+WORKDIR /home/jhipster
+
+ADD entrypoint.sh entrypoint.sh
+RUN chmod 755 entrypoint.sh && chown jhipster:jhipster entrypoint.sh
 USER jhipster
 
-CMD java -jar app.jar
+ENTRYPOINT ["./entrypoint.sh"]
+
+EXPOSE 80
+
+ADD *.jar app.jar
