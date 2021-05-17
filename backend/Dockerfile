@@ -1,20 +1,17 @@
-FROM openjdk:11-jre-slim-stretch
+FROM openjdk:11
+ADD . /code/
+RUN cd /code/ && \
+    ./mvnw package -Pprod -DskipTests && \
+    mv target/*.jar app.jar
 
+FROM openjdk:11-jre-alpine
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JHIPSTER_SLEEP=0 \
     JAVA_OPTS=""
+EXPOSE 8080
 
-# Add a jhipster user to run our application so that it doesn't need to run as root
-RUN adduser --home /home/jhipster --disabled-password jhipster
-
-WORKDIR /home/jhipster
-
-ADD entrypoint.sh entrypoint.sh
-RUN chmod 755 entrypoint.sh && chown jhipster:jhipster entrypoint.sh
+RUN adduser -D -s /bin/sh jhipster
 USER jhipster
 
-ENTRYPOINT ["./entrypoint.sh"]
-
-EXPOSE 80
-
-ADD *.jar app.jar
+CMD java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar app.jar
+COPY --from=0 /code/app.jar .
