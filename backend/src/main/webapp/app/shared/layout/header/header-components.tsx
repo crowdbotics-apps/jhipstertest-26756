@@ -33,3 +33,14 @@ export const Home = props => (
     </NavLink>
   </NavItem>
 );
+
+export const Rules = props => (
+  <NavItem>
+    <NavLink tag={Link} to="/rule" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="tasks" />
+      <span>
+        <Translate contentKey="global.menu.entities.rule">Home</Translate>
+      </span>
+    </NavLink>
+  </NavItem>
+);
