@@ -1,0 +1,37 @@
+{
+  "apptestApp": {
+    "rule": {
+      "home": {
+        "title": "Rules",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Rule",
+        "createOrEditLabel": "Crear o editar Rule",
+        "notFound": "Ningún Rules encontrado"
+      },
+      "created": "Un nuevo Rule ha sido creado con el identificador {{ param }}",
+      "updated": "Un Rule ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Rule ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Rule {{ id }}?"
+      },
+      "detail": {
+        "title": "Rule"
+      },
+      "id": "ID",
+      "name": "Name",
+      "clientTariffNumber": "Client Tariff Number",
+      "ruleNumber": "Rule Number",
+      "status": "Status",
+      "publisherName": "Publisher Name",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "effectiveDate": "Effective Date",
+      "expirationDate": "Expiration Date",
+      "fileDate": "File Date",
+      "fileAmendType": "File Amend Type",
+      "formula": "Formula",
+      "parentRule": "Parent Rule",
+      "ruleText": "Rule Text"
+    }
+  }
+}
