@@ -15,7 +15,8 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 export interface IRuleUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const RuleUpdate = (props: IRuleUpdateProps) => {
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew, setNew] = useState(!props.match.params || !props.match.params.id);
+  const [olderRule, setOlderRule] = useState(null);
 
   const { ruleEntity, loading, updating } = props;
 
@@ -65,6 +66,15 @@ export const RuleUpdate = (props: IRuleUpdateProps) => {
     }
   };
 
+  const searchOlderRule = () => {
+    props.getEntity(parseInt(olderRule, 2));
+
+  }
+
+  const setOldRuleValue = (event, value) => {
+      setOlderRule(value);
+  }
+
   return (
     <div>
       <Row className="justify-content-center">
@@ -87,36 +97,52 @@ export const RuleUpdate = (props: IRuleUpdateProps) => {
                   </Label>
                   <AvInput id="rule-id" type="text" className="form-control" name="id" required readOnly />
                 </AvGroup>
-              ) : null}
+              ) : (
+                <AvGroup>
+                  <Label id="parentRuleLabel" for="rule-parentRule">
+                    <Translate contentKey="apptestApp.rule.parentRule">Parent Rule</Translate>
+                  </Label>
+                  <Row>
+                    <Col md="11">
+                      <AvField value={ruleEntity ? props.ruleEntity.id : ''} onChange={(event, value) => setOldRuleValue(event, value)} placeholder={'Copy older Rule data (search by ID)'} id="rule-parentRule" data-cy="parentRule" type="string" className="form-control" name="parentRule" />
+                    </Col>
+                    <Col md="1">
+                      <div className="white-button" onClick={() => {
+                        searchOlderRule()
+                      }}><img className="small-icon" src='../../../content/images/img/icons/MagnifyingGlass.png' /></div>
+                    </Col>
+                  </Row>
+                </AvGroup>
+              )}
               <AvGroup>
                 <Label id="nameLabel" for="rule-name">
                   <Translate contentKey="apptestApp.rule.name">Name</Translate>
                 </Label>
-                <AvField id="rule-name" data-cy="name" type="text" name="name" />
+                <AvField value={ruleEntity ? props.ruleEntity.name : ''} id="rule-name" data-cy="name" type="text" name="name" />
               </AvGroup>
               <AvGroup>
                 <Label id="clientTariffNumberLabel" for="rule-clientTariffNumber">
                   <Translate contentKey="apptestApp.rule.clientTariffNumber">Client Tariff Number</Translate>
                 </Label>
-                <AvField id="rule-clientTariffNumber" data-cy="clientTariffNumber" type="text" name="clientTariffNumber" />
+                <AvField value={ruleEntity ? props.ruleEntity.clientTariffNumber : ''} id="rule-clientTariffNumber" data-cy="clientTariffNumber" type="text" name="clientTariffNumber" />
               </AvGroup>
               <AvGroup>
                 <Label id="ruleNumberLabel" for="rule-ruleNumber">
                   <Translate contentKey="apptestApp.rule.ruleNumber">Rule Number</Translate>
                 </Label>
-                <AvField id="rule-ruleNumber" data-cy="ruleNumber" type="text" name="ruleNumber" />
+                <AvField value={ruleEntity ? props.ruleEntity.ruleNumber : ''} id="rule-ruleNumber" data-cy="ruleNumber" type="text" name="ruleNumber" />
               </AvGroup>
               <AvGroup>
                 <Label id="statusLabel" for="rule-status">
                   <Translate contentKey="apptestApp.rule.status">Status</Translate>
                 </Label>
-                <AvField id="rule-status" data-cy="status" type="text" name="status" />
+                <AvField value={ruleEntity ? props.ruleEntity.status : ''}  id="rule-status" data-cy="status" type="text" name="status" />
               </AvGroup>
               <AvGroup>
                 <Label id="publisherNameLabel" for="rule-publisherName">
                   <Translate contentKey="apptestApp.rule.publisherName">Publisher Name</Translate>
                 </Label>
-                <AvField id="rule-publisherName" data-cy="publisherName" type="text" name="publisherName" />
+                <AvField value={ruleEntity ? props.ruleEntity.publisherName : ''} id="rule-publisherName" data-cy="publisherName" type="text" name="publisherName" />
               </AvGroup>
               <AvGroup>
                 <Label id="createdAtLabel" for="rule-createdAt">
@@ -168,25 +194,19 @@ export const RuleUpdate = (props: IRuleUpdateProps) => {
                 <Label id="fileAmendTypeLabel" for="rule-fileAmendType">
                   <Translate contentKey="apptestApp.rule.fileAmendType">File Amend Type</Translate>
                 </Label>
-                <AvField id="rule-fileAmendType" data-cy="fileAmendType" type="text" name="fileAmendType" />
+                <AvField value={ruleEntity ? props.ruleEntity.fileAmendType : ''} id="rule-fileAmendType" data-cy="fileAmendType" type="text" name="fileAmendType" />
               </AvGroup>
               <AvGroup>
                 <Label id="formulaLabel" for="rule-formula">
                   <Translate contentKey="apptestApp.rule.formula">Formula</Translate>
                 </Label>
-                <AvInput id="rule-formula" data-cy="formula" type="textarea" name="formula" />
-              </AvGroup>
-              <AvGroup>
-                <Label id="parentRuleLabel" for="rule-parentRule">
-                  <Translate contentKey="apptestApp.rule.parentRule">Parent Rule</Translate>
-                </Label>
-                <AvField id="rule-parentRule" data-cy="parentRule" type="string" className="form-control" name="parentRule" />
+                <AvInput value={ruleEntity ? props.ruleEntity.formula : ''} id="rule-formula" data-cy="formula" type="textarea" name="formula" />
               </AvGroup>
               <AvGroup>
                 <Label id="ruleTextLabel" for="rule-ruleText">
                   <Translate contentKey="apptestApp.rule.ruleText">Rule Text</Translate>
                 </Label>
-                <AvInput id="rule-ruleText" data-cy="ruleText" type="textarea" name="ruleText" />
+                <AvInput value={ruleEntity ? props.ruleEntity.ruleText : ''} id="rule-ruleText" data-cy="ruleText" type="textarea" name="ruleText" />
               </AvGroup>
               <Button tag={Link} id="cancel-save" to="/rule" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
