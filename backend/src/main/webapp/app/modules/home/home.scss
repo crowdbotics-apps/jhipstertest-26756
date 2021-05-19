@@ -38,10 +38,28 @@ h2 {
 
 .form-group {
   color: white;
+  font-size: 8pt;
 }
 
 .nav-item {
   font-size: 8pt;
+}
+
+.table-responsive {
+  border: 0px solid #2176ff;
+  background-color: transparent;
+}
+
+.modal-title {
+    color: white;
+}
+
+.form-check-label {
+  color: white;
+}
+
+label {
+  color: white;
 }
 
 /**
@@ -2192,4 +2210,11 @@ p {
 
 .topbar-drop-down {
   position: absolute;
+}
+
+.info {
+  color: white;
+  font-size: 8pt;
+  margin-top: 0px;
+  margin-bottom: 15px;
 }

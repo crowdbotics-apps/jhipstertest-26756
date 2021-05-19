@@ -5,6 +5,8 @@ import { Button, Col, Row, Table } from 'reactstrap';
 import { byteSize, Translate, TextFormat, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import RuleModal from './rule-modal';
+
 import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './rule.reducer';
 import { IRule } from 'app/shared/model/rule.model';
@@ -20,6 +22,8 @@ export const Rule = (props: IRuleProps) => {
   );
 
   const [showSearch, setShowSearch] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [currentRule, setCurrentRule] = useState(null);
 
   const getAllEntities = () => {
     props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
@@ -105,9 +109,22 @@ export const Rule = (props: IRuleProps) => {
     }
   }
 
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  const showRuleModal = () => {
+    if(!showModal) {
+      return null;
+    } else {
+      return <RuleModal showModal={showModal} handleClose={handleClose} rule={currentRule}/>;
+    }
+  }
+
   const { ruleList, match, loading, totalItems } = props;
   return (
     <div className="container-padded">
+      {showRuleModal()}
       <h2 id="rule-heading" data-cy="RuleHeading">
         <Translate contentKey="apptestApp.rule.home.title">Rules</Translate>
         <div className="d-flex justify-content-end">
@@ -163,15 +180,18 @@ export const Rule = (props: IRuleProps) => {
             <div className="grid-container">
               { ruleList.map((item, i) => (
                 <div key={i} className="grid-content" onClick={() => {
-                  /* let _this = this;
-                  setState({
-                    showRuleText: true,
-                    ruleText: item.rule_file
-                  }, () => {
-                    _getFile(item.rule_file)
-                  }); */
+                  setCurrentRule(item);
+                  setShowModal(true);
                 }}>
                   <b>{item.name}</b>
+                  <Button
+                    style={{float: 'right', padding: 0, paddingRight: 10}}
+                    tag={Link}
+                    to={`${match.url}/${item.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                    color="transparent"
+                    size="sm"
+                    data-cy="entityEditButton"
+                  ><FontAwesomeIcon style={{color: 'black'}} icon="pencil-alt" />{' '}</Button>
                   <table>
                     <thead>
                       <th>Company</th>
@@ -234,3 +254,4 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Rule);
+
