@@ -19,6 +19,8 @@ export const Rule = (props: IRuleProps) => {
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
+  const [showSearch, setShowSearch] = useState(false);
+
   const getAllEntities = () => {
     props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
   };
@@ -74,9 +76,38 @@ export const Rule = (props: IRuleProps) => {
      return datestring;
   }
 
+  const showSeachButton = () => {
+    if(!showSearch) {
+      return (
+        <button onClick={() => {
+          setShowSearch(true)
+        }}><img className="small-icon" src='../../../content/images/img/icons/MagnifyingGlass.png' /></button>
+      )
+    } else {
+      return (
+        <div className="search-field-container">
+          <img className="small-icon" src='../../../content/images/img/icons/MagnifyingGlass.png' />
+          <input type="text" id="search-input" name="search-input" className="search-field" placeholder="Find in view"/>
+          <div className="reset-input" onClick={() => {
+              /* this.setState({ showSearch: false, searchValue: undefined });
+              let _this = this;
+              store.data.getRules().then((rules) => {
+                console.log(rules);
+                if(rules) {
+                  _this.setState({
+                    rules: rules.results
+                  })
+                }
+              }); */
+            }}><img className="small-icon" src='../../../content/images/img/icons/XCircle.png' /></div>
+        </div>
+      )
+    }
+  }
+
   const { ruleList, match, loading, totalItems } = props;
   return (
-    <div>
+    <div className="container-padded">
       <h2 id="rule-heading" data-cy="RuleHeading">
         <Translate contentKey="apptestApp.rule.home.title">Rules</Translate>
         <div className="d-flex justify-content-end">
@@ -94,8 +125,16 @@ export const Rule = (props: IRuleProps) => {
       <div className="table-responsive">
         {ruleList && ruleList.length > 0 ? (
           <>
-            <Table responsive>
-              <thead>
+          <div className="grid-toolbar">
+            <button onClick={() => alert("Hide Fields available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/EyeSlash.png' />Hide Fields</button>
+            <button onClick={() => alert("Filter available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/FunnelSimple.png' />Filter</button>
+            <button onClick={() => alert("Sort... available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/OpDa.png' />Sort</button>
+            <button onClick={() => alert("More... available soon")}><img className="small-icon" src='../../../content/images/img/icons/DotsThreeOutline.png' /></button>
+            {showSeachButton()}
+            <button className="floated-right" onClick={() => alert("Calendar available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/Calendar.png' />Access Date</button>
+          </div>
+            <Table responsive style={{marginBottom: 0}}>
+              <thead className="grid-header">
                 <tr>
                   <th className="hand" onClick={sort('id')}>
                     <Translate contentKey="apptestApp.rule.id">ID</Translate> <FontAwesomeIcon icon="sort" />
@@ -116,41 +155,15 @@ export const Rule = (props: IRuleProps) => {
                   <th className="hand" onClick={sort('publisherName')}>
                     <Translate contentKey="apptestApp.rule.publisherName">Publisher Name</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
-                  <th className="hand" onClick={sort('createdAt')}>
-                    <Translate contentKey="apptestApp.rule.createdAt">Created At</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('updatedAt')}>
-                    <Translate contentKey="apptestApp.rule.updatedAt">Updated At</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('effectiveDate')}>
-                    <Translate contentKey="apptestApp.rule.effectiveDate">Effective Date</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('expirationDate')}>
-                    <Translate contentKey="apptestApp.rule.expirationDate">Expiration Date</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('fileDate')}>
-                    <Translate contentKey="apptestApp.rule.fileDate">File Date</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('fileAmendType')}>
-                    <Translate contentKey="apptestApp.rule.fileAmendType">File Amend Type</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('formula')}>
-                    <Translate contentKey="apptestApp.rule.formula">Formula</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('parentRule')}>
-                    <Translate contentKey="apptestApp.rule.parentRule">Parent Rule</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('ruleText')}>
-                    <Translate contentKey="apptestApp.rule.ruleText">Rule Text</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
                   <th />
                 </tr>
               </thead>
+
             </Table>
             <div className="grid-container">
               { ruleList.map((item, i) => (
                 <div key={i} className="grid-content" onClick={() => {
-                  /* var _this = this;
+                  /* let _this = this;
                   setState({
                     showRuleText: true,
                     ruleText: item.rule_file
