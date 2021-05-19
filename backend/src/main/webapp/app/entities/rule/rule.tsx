@@ -4,6 +4,9 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
 import { byteSize, Translate, TextFormat, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
+
+import RuleModal from './rule-modal';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './rule.reducer';
@@ -19,13 +22,31 @@ export const Rule = (props: IRuleProps) => {
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
+  const [showSearch, setShowSearch] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [currentRule, setCurrentRule] = useState(null);
+  const [showDateField, setShowDateField] = useState(false);
+  const [form, setForm] = useState(null);
+
   const getAllEntities = () => {
-    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`, undefined);
   };
 
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    if (props.location.search !== endURL) {
+      props.history.push(`${props.location.pathname}${endURL}`);
+    }
+  };
+
+  const getActiveRules = (value) => {
+    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`, value);
+  };
+
+  const getActiveRulesTrigger = (value) => {
+    getActiveRules(value);
+    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}&date=${value}`;
     if (props.location.search !== endURL) {
       props.history.push(`${props.location.pathname}${endURL}`);
     }
@@ -68,9 +89,76 @@ export const Rule = (props: IRuleProps) => {
     sortEntities();
   };
 
+  const formatDate = (date) => {
+     const d = new Date(date);
+     const datestring = (d.getDate()+1)  + "." + (d.getMonth()+1) + "." + d.getFullYear();
+     return datestring;
+  }
+
+  const showSeachButton = () => {
+    if(!showSearch) {
+      return (
+        <button onClick={() => {
+          setShowSearch(true)
+        }}><img className="small-icon" src='../../../content/images/img/icons/MagnifyingGlass.png' /></button>
+      )
+    } else {
+      return (
+        <div className="search-field-container">
+          <img className="small-icon" src='../../../content/images/img/icons/MagnifyingGlass.png' />
+          <input type="text" id="search-input" name="search-input" className="search-field" placeholder="Find in view"/>
+          <div className="reset-input" onClick={() => {
+              /* this.setState({ showSearch: false, searchValue: undefined });
+              let _this = this;
+              store.data.getRules().then((rules) => {
+                console.log(rules);
+                if(rules) {
+                  _this.setState({
+                    rules: rules.results
+                  })
+                }
+              }); */
+            }}><img className="small-icon" src='../../../content/images/img/icons/XCircle.png' /></div>
+        </div>
+      )
+    }
+  }
+
+  const filterAccessDate = (event, value) => {
+    // eslint-disable-next-line no-console
+    getActiveRulesTrigger(value);
+  }
+
+  const showAccessDateButton = () => {
+    if(!showDateField) {
+      return (
+        <button className="floated-right" onClick={() => setShowDateField(true)}><img className="small-icon-left" src='../../../content/images/img/icons/Calendar.png' />Access Date</button>
+      )
+    } else {
+      return (
+        <AvForm ref={c => (setForm(c))}  className="floated-right">
+          <AvField onChange={(event, value) => filterAccessDate(event, value)} id="rule-expirationDate" data-cy="expirationDate" type="date" className="grid-toolbar-item" name="expirationDate" placeholder={'Access Date'} />
+        </AvForm>
+      )
+    }
+  }
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  const showRuleModal = () => {
+    if(!showModal) {
+      return null;
+    } else {
+      return <RuleModal showModal={showModal} handleClose={handleClose} rule={currentRule}/>;
+    }
+  }
+
   const { ruleList, match, loading, totalItems } = props;
   return (
-    <div>
+    <div className="container-padded">
+      {showRuleModal()}
       <h2 id="rule-heading" data-cy="RuleHeading">
         <Translate contentKey="apptestApp.rule.home.title">Rules</Translate>
         <div className="d-flex justify-content-end">
@@ -86,123 +174,76 @@ export const Rule = (props: IRuleProps) => {
         </div>
       </h2>
       <div className="table-responsive">
+        <div className="grid-toolbar">
+          <button onClick={() => alert("Hide Fields available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/EyeSlash.png' />Hide Fields</button>
+          <button onClick={() => alert("Filter available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/FunnelSimple.png' />Filter</button>
+          <button onClick={() => alert("Sort... available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/OpDa.png' />Sort</button>
+          <button onClick={() => alert("More... available soon")}><img className="small-icon" src='../../../content/images/img/icons/DotsThreeOutline.png' /></button>
+          {showSeachButton()}
+          {showAccessDateButton()}
+        </div>
         {ruleList && ruleList.length > 0 ? (
-          <Table responsive>
-            <thead>
-              <tr>
-                <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="apptestApp.rule.id">ID</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('name')}>
-                  <Translate contentKey="apptestApp.rule.name">Name</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('clientTariffNumber')}>
-                  <Translate contentKey="apptestApp.rule.clientTariffNumber">Client Tariff Number</Translate>{' '}
-                  <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('ruleNumber')}>
-                  <Translate contentKey="apptestApp.rule.ruleNumber">Rule Number</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('status')}>
-                  <Translate contentKey="apptestApp.rule.status">Status</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('publisherName')}>
-                  <Translate contentKey="apptestApp.rule.publisherName">Publisher Name</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('createdAt')}>
-                  <Translate contentKey="apptestApp.rule.createdAt">Created At</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('updatedAt')}>
-                  <Translate contentKey="apptestApp.rule.updatedAt">Updated At</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('effectiveDate')}>
-                  <Translate contentKey="apptestApp.rule.effectiveDate">Effective Date</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('expirationDate')}>
-                  <Translate contentKey="apptestApp.rule.expirationDate">Expiration Date</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('fileDate')}>
-                  <Translate contentKey="apptestApp.rule.fileDate">File Date</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('fileAmendType')}>
-                  <Translate contentKey="apptestApp.rule.fileAmendType">File Amend Type</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('formula')}>
-                  <Translate contentKey="apptestApp.rule.formula">Formula</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('parentRule')}>
-                  <Translate contentKey="apptestApp.rule.parentRule">Parent Rule</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('ruleText')}>
-                  <Translate contentKey="apptestApp.rule.ruleText">Rule Text</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {ruleList.map((rule, i) => (
-                <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`${match.url}/${rule.id}`} color="link" size="sm">
-                      {rule.id}
-                    </Button>
-                  </td>
-                  <td>{rule.name}</td>
-                  <td>{rule.clientTariffNumber}</td>
-                  <td>{rule.ruleNumber}</td>
-                  <td>{rule.status}</td>
-                  <td>{rule.publisherName}</td>
-                  <td>{rule.createdAt ? <TextFormat type="date" value={rule.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{rule.updatedAt ? <TextFormat type="date" value={rule.updatedAt} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>
-                    {rule.effectiveDate ? <TextFormat type="date" value={rule.effectiveDate} format={APP_LOCAL_DATE_FORMAT} /> : null}
-                  </td>
-                  <td>
-                    {rule.expirationDate ? <TextFormat type="date" value={rule.expirationDate} format={APP_LOCAL_DATE_FORMAT} /> : null}
-                  </td>
-                  <td>{rule.fileDate ? <TextFormat type="date" value={rule.fileDate} format={APP_LOCAL_DATE_FORMAT} /> : null}</td>
-                  <td>{rule.fileAmendType}</td>
-                  <td>{rule.formula}</td>
-                  <td>{rule.parentRule}</td>
-                  <td>{rule.ruleText}</td>
-                  <td className="text-right">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${rule.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`${match.url}/${rule.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`${match.url}/${rule.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.delete">Delete</Translate>
-                        </span>
-                      </Button>
-                    </div>
-                  </td>
+          <>
+            <Table responsive style={{marginBottom: 0}}>
+              <thead className="grid-header">
+                <tr>
+                  <th className="hand" onClick={sort('id')}>
+                    <Translate contentKey="apptestApp.rule.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('name')}>
+                    <Translate contentKey="apptestApp.rule.name">Name</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('clientTariffNumber')}>
+                    <Translate contentKey="apptestApp.rule.clientTariffNumber">Client Tariff Number</Translate>{' '}
+                    <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('ruleNumber')}>
+                    <Translate contentKey="apptestApp.rule.ruleNumber">Rule Number</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('status')}>
+                    <Translate contentKey="apptestApp.rule.status">Status</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('publisherName')}>
+                    <Translate contentKey="apptestApp.rule.publisherName">Publisher Name</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th />
                 </tr>
+              </thead>
+
+            </Table>
+            <div className="grid-container">
+              { ruleList.map((item, i) => (
+                <div key={i} className="grid-content" onClick={() => {
+                  setCurrentRule(item);
+                  setShowModal(true);
+                }}>
+                  <b>{item.name}</b>
+                  <Button
+                    style={{float: 'right', padding: 0, paddingRight: 10}}
+                    tag={Link}
+                    to={`${match.url}/${item.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                    color="transparent"
+                    size="sm"
+                    data-cy="entityEditButton"
+                  ><FontAwesomeIcon style={{color: 'black'}} icon="pencil-alt" />{' '}</Button>
+                  <table>
+                    <thead>
+                      <th>Company</th>
+                      <th>Rule</th>
+                      <th>Effective</th>
+                      <th>Between</th>
+                    </thead>
+                    <tr>
+                      <td>{item.clientTariffNumber ? item.clientTariffNumber : 'Company Name'}</td>
+                      <td>Rule {item.ruleNumber}</td>
+                      <td>{formatDate(item.effectiveDate)}</td>
+                      <td>A and B</td>
+                    </tr>
+                  </table>
+                </div>
               ))}
-            </tbody>
-          </Table>
+            </div>
+          </>
         ) : (
           !loading && (
             <div className="alert alert-warning">
@@ -247,3 +288,4 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Rule);
+

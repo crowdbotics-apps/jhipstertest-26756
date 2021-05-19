@@ -5,6 +5,8 @@ import com.crowdbotics.apptest.repository.RuleRepository;
 import com.crowdbotics.apptest.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -187,9 +189,22 @@ public class RuleResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rules in body.
      */
     @GetMapping("/rules")
-    public ResponseEntity<List<Rule>> getAllRules(Pageable pageable) {
-        log.debug("REST request to get a page of Rules");
-        Page<Rule> page = ruleRepository.findAll(pageable);
+    public ResponseEntity<List<Rule>> getAllRules(@RequestParam String accessDate, Pageable pageable) {
+        log.debug("REST request to get a page of Rules " + accessDate);
+
+        Page<Rule> page = null;
+        if(accessDate != null && !accessDate.equals("undefined")) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDate = LocalDate.parse(accessDate, formatter);
+                page = ruleRepository.findAllByAccessDate(localDate, pageable);
+            } catch (Exception ex) {
+                page = ruleRepository.findAll(pageable);
+            }
+        } else {
+            page = ruleRepository.findAll(pageable);
+        }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

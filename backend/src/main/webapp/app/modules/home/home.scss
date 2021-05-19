@@ -15,15 +15,51 @@ Main page styles
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0px;
+    font-size: 6pt;
 }
 
 .app-container .view-container .card {
     padding: 20px 0px 0px 0px;
-    background-color: white;
+    background-color: black;
 }
 
 .table {
   color: black;
+}
+
+.container-padded {
+  padding: 25px;
+  background-color: black;
+}
+
+h2 {
+  color: white;
+}
+
+.form-group {
+  color: white;
+  font-size: 8pt;
+}
+
+.nav-item {
+  font-size: 8pt;
+}
+
+.table-responsive {
+  border: 0px solid #2176ff;
+  background-color: transparent;
+}
+
+.modal-title {
+    color: white;
+}
+
+.form-check-label {
+  color: white;
+}
+
+label {
+  color: white;
 }
 
 /**
@@ -2013,6 +2049,19 @@ p {
   margin-right: 15px;
 }
 
+.grid-toolbar-item {
+  background-color: white; /* Green */
+  color: #535353;
+  padding: 7px 5px 5px 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  border: 1px solid #FD896E;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
 .floated-right {
   float: right;
   margin-right: 0px !important;
@@ -2174,4 +2223,11 @@ p {
 
 .topbar-drop-down {
   position: absolute;
+}
+
+.info {
+  color: white;
+  font-size: 8pt;
+  margin-top: 0px;
+  margin-bottom: 15px;
 }
