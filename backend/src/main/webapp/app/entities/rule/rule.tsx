@@ -4,6 +4,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
 import { byteSize, Translate, TextFormat, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
 
 import RuleModal from './rule-modal';
 
@@ -24,6 +25,8 @@ export const Rule = (props: IRuleProps) => {
   const [showSearch, setShowSearch] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [currentRule, setCurrentRule] = useState(null);
+  const [showDateField, setShowDateField] = useState(false);
+  const [form, setForm] = useState(null);
 
   const getAllEntities = () => {
     props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
@@ -32,6 +35,18 @@ export const Rule = (props: IRuleProps) => {
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    if (props.location.search !== endURL) {
+      props.history.push(`${props.location.pathname}${endURL}`);
+    }
+  };
+
+  const getActiveRules = () => {
+    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+  };
+
+  const getActiveRulesTrigger = (value) => {
+    getActiveRules();
+    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}&date=${value}`;
     if (props.location.search !== endURL) {
       props.history.push(`${props.location.pathname}${endURL}`);
     }
@@ -109,6 +124,25 @@ export const Rule = (props: IRuleProps) => {
     }
   }
 
+  const filterAccessDate = (event, value) => {
+    // eslint-disable-next-line no-console
+    getActiveRulesTrigger(value);
+  }
+
+  const showAccessDateButton = () => {
+    if(!showDateField) {
+      return (
+        <button className="floated-right" onClick={() => setShowDateField(true)}><img className="small-icon-left" src='../../../content/images/img/icons/Calendar.png' />Access Date</button>
+      )
+    } else {
+      return (
+        <AvForm ref={c => (setForm(c))}  className="floated-right">
+          <AvField onChange={(event, value) => filterAccessDate(event, value)} id="rule-expirationDate" data-cy="expirationDate" type="date" className="grid-toolbar-item" name="expirationDate" placeholder={'Access Date'} />
+        </AvForm>
+      )
+    }
+  }
+
   const handleClose = () => {
     setShowModal(false);
   };
@@ -148,7 +182,7 @@ export const Rule = (props: IRuleProps) => {
             <button onClick={() => alert("Sort... available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/OpDa.png' />Sort</button>
             <button onClick={() => alert("More... available soon")}><img className="small-icon" src='../../../content/images/img/icons/DotsThreeOutline.png' /></button>
             {showSeachButton()}
-            <button className="floated-right" onClick={() => alert("Calendar available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/Calendar.png' />Access Date</button>
+            {showAccessDateButton()}
           </div>
             <Table responsive style={{marginBottom: 0}}>
               <thead className="grid-header">

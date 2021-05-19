@@ -2049,6 +2049,19 @@ p {
   margin-right: 15px;
 }
 
+.grid-toolbar-item {
+  background-color: white; /* Green */
+  color: #535353;
+  padding: 7px 5px 5px 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  border: 1px solid #FD896E;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
 .floated-right {
   float: right;
   margin-right: 0px !important;
