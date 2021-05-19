@@ -29,7 +29,7 @@ export const Rule = (props: IRuleProps) => {
   const [form, setForm] = useState(null);
 
   const getAllEntities = () => {
-    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`, undefined);
   };
 
   const sortEntities = () => {
@@ -91,7 +91,7 @@ export const Rule = (props: IRuleProps) => {
 
   const formatDate = (date) => {
      const d = new Date(date);
-     const datestring = d.getDate()  + "." + (d.getMonth()+1) + "." + d.getFullYear();
+     const datestring = (d.getDate()+1)  + "." + (d.getMonth()+1) + "." + d.getFullYear();
      return datestring;
   }
 
@@ -174,16 +174,16 @@ export const Rule = (props: IRuleProps) => {
         </div>
       </h2>
       <div className="table-responsive">
+        <div className="grid-toolbar">
+          <button onClick={() => alert("Hide Fields available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/EyeSlash.png' />Hide Fields</button>
+          <button onClick={() => alert("Filter available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/FunnelSimple.png' />Filter</button>
+          <button onClick={() => alert("Sort... available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/OpDa.png' />Sort</button>
+          <button onClick={() => alert("More... available soon")}><img className="small-icon" src='../../../content/images/img/icons/DotsThreeOutline.png' /></button>
+          {showSeachButton()}
+          {showAccessDateButton()}
+        </div>
         {ruleList && ruleList.length > 0 ? (
           <>
-          <div className="grid-toolbar">
-            <button onClick={() => alert("Hide Fields available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/EyeSlash.png' />Hide Fields</button>
-            <button onClick={() => alert("Filter available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/FunnelSimple.png' />Filter</button>
-            <button onClick={() => alert("Sort... available soon")}><img className="small-icon-left" src='../../../content/images/img/icons/OpDa.png' />Sort</button>
-            <button onClick={() => alert("More... available soon")}><img className="small-icon" src='../../../content/images/img/icons/DotsThreeOutline.png' /></button>
-            {showSeachButton()}
-            {showAccessDateButton()}
-          </div>
             <Table responsive style={{marginBottom: 0}}>
               <thead className="grid-header">
                 <tr>

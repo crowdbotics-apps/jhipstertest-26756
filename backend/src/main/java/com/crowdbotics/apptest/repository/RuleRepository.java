@@ -4,6 +4,7 @@ import com.crowdbotics.apptest.domain.Rule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -14,5 +15,8 @@ import java.time.LocalDate;
 @SuppressWarnings("unused")
 @Repository
 public interface RuleRepository extends JpaRepository<Rule, Long> {
-    Page<Rule> findByEffectiveDateLessThanEqualAndExpirationDateGreaterThanEqualOrEffectiveDateLessThanEqual(LocalDate localDate, LocalDate localDate1, LocalDate localDate2, Pageable pageable);
+
+    @Query("select a from Rule a where (a.effectiveDate <= :accessDate and a.expirationDate > :accessDate) or (a.effectiveDate <= :accessDate and a.expirationDate = null)")
+    Page<Rule> findAllByAccessDate(
+        @Param("accessDate") LocalDate accessDate, Pageable pageable);
 }

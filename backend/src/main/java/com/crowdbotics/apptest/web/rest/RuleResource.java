@@ -194,9 +194,13 @@ public class RuleResource {
 
         Page<Rule> page = null;
         if(accessDate != null && !accessDate.equals("undefined")) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(accessDate, formatter);
-            page = ruleRepository.findByEffectiveDateLessThanEqualAndExpirationDateGreaterThanEqualOrEffectiveDateLessThanEqual(localDate, localDate, localDate, pageable);
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDate = LocalDate.parse(accessDate, formatter);
+                page = ruleRepository.findAllByAccessDate(localDate, pageable);
+            } catch (Exception ex) {
+                page = ruleRepository.findAll(pageable);
+            }
         } else {
             page = ruleRepository.findAll(pageable);
         }

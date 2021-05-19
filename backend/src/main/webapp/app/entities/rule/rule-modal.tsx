@@ -18,7 +18,7 @@ class RuleModal extends React.Component<IRuleModalProps> {
 
     const formatDate = (date) => {
        const d = new Date(date);
-       const datestring = d.getDate()  + "." + (d.getMonth()+1) + "." + d.getFullYear();
+       const datestring = (d.getDate()+1)   + "." + (d.getMonth()+1) + "." + d.getFullYear();
        return datestring;
     }
 

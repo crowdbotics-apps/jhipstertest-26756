@@ -117,7 +117,7 @@ const apiUrl = 'api/rules';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IRule> = (page, size, sort, accessDate) => {
+export const getEntities = (page, size, sort, accessDate) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&accessDate=${accessDate}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_RULE_LIST,
@@ -138,7 +138,7 @@ export const createEntity: ICrudPutAction<IRule> = entity => async dispatch => {
     type: ACTION_TYPES.CREATE_RULE,
     payload: axios.post(apiUrl, cleanEntity(entity)),
   });
-  dispatch(getEntities());
+  dispatch(getEntities(undefined, undefined, undefined, undefined));
   return result;
 };
 
@@ -164,7 +164,7 @@ export const deleteEntity: ICrudDeleteAction<IRule> = id => async dispatch => {
     type: ACTION_TYPES.DELETE_RULE,
     payload: axios.delete(requestUrl),
   });
-  dispatch(getEntities());
+  dispatch(getEntities(undefined, undefined, undefined, undefined));
   return result;
 };
 

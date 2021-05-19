@@ -209,7 +209,7 @@ describe('Entities reducer tests', () => {
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(getEntities()).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(getEntities(undefined, undefined, undefined, undefined)).then(() => expect(store.getActions()).toEqual(expectedActions));
     });
 
     it('dispatches ACTION_TYPES.FETCH_RULE actions', async () => {
