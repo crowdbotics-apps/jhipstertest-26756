@@ -117,8 +117,8 @@ const apiUrl = 'api/rules';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IRule> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+export const getEntities: ICrudGetAllAction<IRule> = (page, size, sort, accessDate) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&accessDate=${accessDate}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_RULE_LIST,
     payload: axios.get<IRule>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),

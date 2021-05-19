@@ -40,12 +40,12 @@ export const Rule = (props: IRuleProps) => {
     }
   };
 
-  const getActiveRules = () => {
-    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+  const getActiveRules = (value) => {
+    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`, value);
   };
 
   const getActiveRulesTrigger = (value) => {
-    getActiveRules();
+    getActiveRules(value);
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}&date=${value}`;
     if (props.location.search !== endURL) {
       props.history.push(`${props.location.pathname}${endURL}`);
