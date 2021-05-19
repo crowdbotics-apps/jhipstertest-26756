@@ -41,13 +41,13 @@ class RuleModal extends React.Component<IRuleModalProps> {
                 </div>
                 <label>RULE#</label>
                 <div className="info">
-                  <span>{this.props.rule.ruleNumber}</span>
+                  <span>{this.props.rule.id} - {this.props.rule.ruleNumber}</span>
                 </div>
                 <label>EFFECTIVE</label>
                 <div className="info">
                   <span>{formatDate(this.props.rule.effectiveDate)}</span>
                 </div>
-                <label>EFFECTIVE</label>
+                <label>RULE TEXT</label>
                 <div className="info" dangerouslySetInnerHTML={{__html: this.props.rule.ruleText}} />
               </Col>
             </Row>
